@@ -60,6 +60,43 @@ class User {
       return false;
     }
   }
+
+  async update(id, name, email, role) {
+    const user = this.findById(id);
+
+    if (user !== undefined) {
+      const editUser = {};
+
+      if (email !== undefined) {
+        if (email !== user.email) {
+          const result = await this.findEmail(email);
+
+          if (result === false) {
+            editUser.email = email;
+          }
+        } else {
+          return { status: false, error: `O email já está cadastrado!` };
+        }
+      }
+
+      if (name !== undefined) {
+        editUser.name = name;
+      }
+
+      if (role !== undefined) {
+        editUser.role = role;
+      }
+
+      try {
+        await knex.update(editUser).table('users').where({ id });
+        return { status: true };
+      } catch (error) {
+        return { status: false, error };
+      }
+    } else {
+      return { status: false, error: `O usuário já existe!` };
+    }
+  }
 }
 
 module.exports = new User();

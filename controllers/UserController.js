@@ -48,6 +48,22 @@ class UserController {
       res.status(200).json(user);
     }
   }
+
+  async edit(req, res) {
+    const { id, name, email, role } = req.body;
+
+    const result = await User.update(id, name, email, role);
+
+    if (result !== undefined) {
+      if (result.status) {
+        res.status(200).send(`Usuário atualizado com Success!`);
+      } else {
+        res.status(406).send(result.error);
+      }
+    } else {
+      res.status(406).send(`Ocorreu um error!`);
+    }
+  }
 }
 
 module.exports = new UserController();
