@@ -13,6 +13,7 @@
   "rules": {
     "no-console": "off",
     "class-methods-use-this": "off",
-    "no-else-return": "off"
+    "no-else-return": "off",
+    "prefer-destructuring": "off"
   }
 }

@@ -30,6 +30,24 @@ class UserController {
 
     res.status(200).send(`Requisiçao aceita com success!`);
   }
+
+  async index(req, res) {
+    const users = await User.findAll();
+
+    res.json(users);
+  }
+
+  async findUser(req, res) {
+    const id = req.params.id;
+
+    const user = await User.findById(id);
+
+    if (user === undefined) {
+      res.status(404).json({ err: 'Usuario não encontrado' });
+    } else {
+      res.status(200).json(user);
+    }
+  }
 }
 
 module.exports = new UserController();
