@@ -94,7 +94,21 @@ class User {
         return { status: false, error };
       }
     } else {
-      return { status: false, error: `O usuário já existe!` };
+      return { status: false, error: `O usuário não existe!` };
+    }
+  }
+
+  async delete(id) {
+    const user = await this.findById(id);
+
+    if (user !== undefined) {
+      await knex.delete().table('users').where({ id });
+      return { status: true };
+    } else {
+      return {
+        status: false,
+        error: `O usuário não exite, portanto não pode ser deletado!`,
+      };
     }
   }
 }
