@@ -1,4 +1,5 @@
 const User = require('../models/User');
+const PasswordToken = require('../models/PasswordToken');
 
 class UserController {
   async create(req, res) {
@@ -74,6 +75,37 @@ class UserController {
       res.status(200).send(`Usuário deletado com Sucesso!`);
     } else {
       res.status(406).send(result.error);
+    }
+  }
+
+  async recoverPassword(req, res) {
+    const email = req.body.email;
+
+    const result = await PasswordToken.create(email);
+
+    if (result.status) {
+      res.status(200).send(result.token.token);
+    } else {
+      res.status(406).send(result.error);
+    }
+  }
+
+  async changePassword(req, res) {
+    const password = req.body.password;
+    const token = req.body.token;
+
+    const validateToken = await PasswordToken.validate(token);
+
+    if (validateToken.status) {
+      await User.changePassword(
+        password,
+        validateToken.token.user_id,
+        validateToken.token.token,
+      );
+
+      res.status(200).send(`Senha Alterada com Sucesso! `);
+    } else {
+      res.status(406).send(`Token invalido!`);
     }
   }
 }
