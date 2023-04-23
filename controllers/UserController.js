@@ -1,5 +1,11 @@
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
+
 const User = require('../models/User');
+const Email = require('../models/Email');
 const PasswordToken = require('../models/PasswordToken');
+
+const secret = 'afdawf2awf51wf1a63w5ef1aw3f135ewfa313w5e1f';
 
 class UserController {
   async create(req, res) {
@@ -84,7 +90,7 @@ class UserController {
     const result = await PasswordToken.create(email);
 
     if (result.status) {
-      res.status(200).send(result.token.token);
+      res.status(200).send(result.token);
     } else {
       res.status(406).send(result.error);
     }
@@ -106,6 +112,26 @@ class UserController {
       res.status(200).send(`Senha Alterada com Sucesso! `);
     } else {
       res.status(406).send(`Token invalido!`);
+    }
+  }
+
+  async login(req, res) {
+    const { email, password } = req.body;
+
+    const user = await Email.find(email);
+
+    if (user !== undefined) {
+      const result = await bcrypt.compare(password, user.password);
+
+      if (result) {
+        const token = jwt.sign({ email: user.email, role: user.role }, secret);
+
+        res.status(200).json({ token });
+      } else {
+        res.status(406).send(`Senha Incorreta!`);
+      }
+    } else {
+      res.status(406).json({ status: false });
     }
   }
 }

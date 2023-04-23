@@ -1,11 +1,11 @@
 const { v4: newUuid } = require('uuid');
 
-const User = require('./User');
+const Email = require('./Email');
 const knex = require('../database/connection');
 
 class PasswordToken {
   async create(email) {
-    const user = await User.findByEmail(email);
+    const user = await Email.find(email);
 
     if (user !== undefined) {
       try {
